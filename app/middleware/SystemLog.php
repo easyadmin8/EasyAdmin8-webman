@@ -78,7 +78,7 @@ class SystemLog implements MiddlewareInterface
                 SystemLogService::instance()->setTableName()->save($data);
             }
         }
-        return $handler($request);
+        return $response;
     }
 
 }
