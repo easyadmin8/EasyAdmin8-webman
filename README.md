@@ -1,5 +1,5 @@
 <p>
-<span><img src="https://img.shields.io/badge/php-%3E=8.0.0-brightgreen.svg?maxAge=2592000&amp;" alt="php"></span>
+<span><img src="https://img.shields.io/badge/php-%3E=8.1.0-brightgreen.svg?maxAge=2592000&amp;" alt="php"></span>
 <span><img src="https://img.shields.io/badge/mysql-%3E=5.7-brightgreen.svg?maxAge=2592000&amp;color=blue" alt="MySQL"></span>
 <span><img src="https://img.shields.io/badge/webman-%3E=1.5.0-brightgreen.svg?maxAge=2592000" alt="webman"></span>
 <span><img src="https://img.shields.io/badge/layui-%3E=2.9.0-brightgreen.svg?maxAge=2592000&amp;color=critical" alt="layui"></span>
@@ -8,15 +8,17 @@
 
 ## `EasyAdmin8`所有版本 (当前项目为`webman`版本)
 
-|          |                                Github                                |                               Gitee                               |
-|----------|:--------------------------------------------------------------------:|:-----------------------------------------------------------------:|
-| ThinkPHP |         [EasyAdmin8](https://github.com/wolf-leo/EasyAdmin8)         |         [EasyAdmin8](https://gitee.com/wolf18/EasyAdmin8)         |
-| Laravel  | [EasyAdmin8-Laravel](https://github.com/wolf-leo/EasyAdmin8-Laravel) | [EasyAdmin8-Laravel](https://gitee.com/wolf18/EasyAdmin8-Laravel) |
-| webman   |  [EasyAdmin8-webman](https://github.com/wolf-leo/EasyAdmin8-webman)  |  [EasyAdmin8-webman](https://gitee.com/wolf18/EasyAdmin8-webman)  |
+|          |                                 Github                                 |                                 Gitee                                 |
+|----------|:----------------------------------------------------------------------:|:---------------------------------------------------------------------:|
+| ThinkPHP |         [EasyAdmin8](https://github.com/EasyAdmin8/EasyAdmin8)         |         [EasyAdmin8](https://gitee.com/EasyAdmin8/EasyAdmin8)         |
+| Laravel  | [EasyAdmin8-Laravel](https://github.com/EasyAdmin8/EasyAdmin8-Laravel) | [EasyAdmin8-Laravel](https://gitee.com/EasyAdmin8/EasyAdmin8-Laravel) |
+| webman   |  [EasyAdmin8-webman](https://github.com/EasyAdmin8/EasyAdmin8-webman)  |  [EasyAdmin8-webman](https://gitee.com/EasyAdmin8/EasyAdmin8-webman)  |
 
 ## 项目介绍
 
-> `EasyAdmin8-webman` 在 [`EasyAdmin`](https://gitee.com/zhongshaofa/easyadmin) 的基础上使用 webman 最新版重构，PHP 最低版本要求不低于 8.0
+> `EasyAdmin8-webman` 在 [`EasyAdmin`](https://gitee.com/zhongshaofa/easyadmin) 的基础上使用 webman 最新版重构，PHP 最低版本要求不低于 8.1
+>
+> 如果需要 `PHP 8.0`版本，请在分支选择 `v8.0-thinkphp`
 >
 > webman 和 layui v2.9.x 的快速开发的后台管理系统。
 >
@@ -43,13 +45,13 @@ if [ -f /usr/bin/curl ];then curl -sSO https://easyadmin8.top/auto-install-EasyA
 ```
 1.下载安装包
 
-  git clone -b thinkphp https://github.com/wolf-leo/EasyAdmin8-webman EasyAdmin8-webman-thinkphp
+  git clone -b thinkphp https://github.com/EasyAdmin8/EasyAdmin8-webman EasyAdmin8-webman-thinkphp
 
   或者
 
-  git clone -b thinkphp https://gitee.com/wolf18/EasyAdmin8-webman EasyAdmin8-webman-thinkphp
+  git clone -b thinkphp https://gitee.com/EasyAdmin8/EasyAdmin8-webman EasyAdmin8-webman-thinkphp
 
-2.安装依赖包（确保 PHP 版本 >= 8.0）
+2.安装依赖包（确保 PHP 版本 >= 8.1）
 
   在根目录下 composer install ，如果有报错信息可以使用命令 composer install --ignore-platform-reqs
   
