@@ -33,6 +33,7 @@ class SystemLog implements MiddlewareInterface
     public function process(Request $request, callable $handler): Response
     {
         $response = $handler($request);
+        if (!env('APP_ADMIN_SYSTEM_LOG', true)) return $response;
         if ($request->isAjax()) {
             $params = $request->all();
             if (isset($params['s'])) unset($params['s']);
