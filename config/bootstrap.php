@@ -16,5 +16,4 @@ return [
     support\bootstrap\Session::class,
     support\bootstrap\LaravelDb::class,
     Webman\ThinkOrm\ThinkOrm::class,
-    Webman\ThinkCache\ThinkCache::class,
 ];
