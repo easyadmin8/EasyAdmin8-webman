@@ -58,6 +58,8 @@
 .welcome-module {
     width: 100%;
     height: 210px;
+    max-height: 210px;
+    overflow: hidden;
 }
 
 .panel {
