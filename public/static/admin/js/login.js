@@ -42,7 +42,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
                 })
             }, function (res) {
                 let data = res.data
-                if (data.is_ga_code) {
+                if (data?.is_ga_code || false) {
                     let elem = $('#gaCode')
                     elem.removeClass('layui-hide');
                     elem.find('input').focus()
