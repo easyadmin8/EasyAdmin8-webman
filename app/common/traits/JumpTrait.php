@@ -15,7 +15,7 @@ trait JumpTrait
      * @param int $wait 跳转等待时间
      * @return Response
      */
-    protected function success(string $msg = '操作成功', array $data = [], string $url = null, int $wait = 3): Response
+    protected function success(string $msg = '操作成功', array $data = [], ?string $url = null, int $wait = 3): Response
     {
         if (is_null($url) && isset($_SERVER["HTTP_REFERER"])) {
             $url = $_SERVER["HTTP_REFERER"];
@@ -42,7 +42,7 @@ trait JumpTrait
      * @param int $wait
      * @return Response
      */
-    public function error(string $msg = '操作失败', array $data = [], string $url = null, int $wait = 3): Response
+    public function error(string $msg = '操作失败', array $data = [], ?string $url = null, int $wait = 3): Response
     {
         if (is_null($url)) {
             $url = request()->isAjax() ? '' : 'javascript:history.back(-1);';
@@ -68,7 +68,7 @@ trait JumpTrait
      * @param int $wait
      * @return Response
      */
-    public function responseView(string $msg = '操作失败', array $data = [], string $url = null, int $wait = 3): Response
+    public function responseView(string $msg = '操作失败', array $data = [], ?string $url = null, int $wait = 3): Response
     {
         if (is_null($url)) {
             $url = request()->isAjax() ? '' : 'javascript:history.back(-1);';

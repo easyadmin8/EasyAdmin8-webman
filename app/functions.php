@@ -1,6 +1,6 @@
 <?php
 
-use Shopwwi\LaravelCache\Cache;
+use support\Cache;
 use support\Db;
 
 /**
@@ -64,11 +64,11 @@ if (!function_exists('sysconfig')) {
             if (!empty($name)) {
                 $where['name'] = $name;
                 $value         = \app\admin\model\SystemConfig::where($where)->value('value');
-                Cache::put("sysconfig_{$group}_{$name}", $value, 3600);
+                Cache::set("sysconfig_{$group}_{$name}", $value, 3600);
             }else {
                 $res   = \app\admin\model\SystemConfig::where($where)->select('value', 'name')->get()->toArray();
                 $value = collect($res)->pluck('value', 'name')->toArray();
-                Cache::put("sysconfig_{$group}", $value, 3600);
+                Cache::set("sysconfig_{$group}", $value, 3600);
             }
         }
         return $value;

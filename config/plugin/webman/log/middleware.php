@@ -12,6 +12,10 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
+use Webman\Log\Middleware;
+
 return [
-    support\bootstrap\Session::class,
+    '@' => [
+        Middleware::class
+    ]
 ];

@@ -4,7 +4,7 @@ namespace app\admin\controller;
 
 use app\admin\model\SystemAdmin;
 use app\common\controller\AdminController;
-use Shopwwi\LaravelCache\Cache;
+use support\Cache;
 use support\Request;
 use support\Response;
 use Respect\Validation\Validator;
@@ -20,7 +20,7 @@ class LoginController extends AdminController
         if (!$request->isAjax()) {
             return $this->fetch('', compact('captcha'));
         }
-        Cache::flush();
+        Cache::clear();
         $post = $request->post();
         Validator::input($post, [
             'username' => Validator::notEmpty()->setName('用户名'),

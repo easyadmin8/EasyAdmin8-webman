@@ -4,7 +4,7 @@ namespace app\common\controller;
 
 use app\common\traits\Curd;
 use app\common\traits\JumpTrait;
-use Shopwwi\LaravelCache\Cache;
+use support\Cache;
 use support\Db;
 use support\Response;
 use support\View;
@@ -89,8 +89,8 @@ class AdminController
         $version              = Cache::get('version');
         if (empty($version)) {
             $version = sysconfig('site', 'site_version');
-            Cache::put('site_version', $version);
-            Cache::put('version', $version, 3600);
+            Cache::set('site_version', $version);
+            Cache::set('version', $version, 3600);
         }
         $data = [
             'adminModuleName'      => $adminModuleName,

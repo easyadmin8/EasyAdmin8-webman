@@ -6,9 +6,8 @@ use app\admin\model\SystemUploadfile;
 use app\common\controller\AdminController;
 use app\common\services\MenuService;
 use app\common\services\UploadService;
-use Illuminate\View\View;
 use Respect\Validation\Validator;
-use Shopwwi\LaravelCache\Cache;
+use support\Cache;
 use support\Request;
 use support\Response;
 
@@ -34,7 +33,7 @@ class AjaxController extends AdminController
             'homeInfo' => $menuService->getHomeInfo(),
             'menuInfo' => $menuService->getMenuTree(),
         ];
-        Cache::put('initAdmin_' . session('admin.id'), $data);
+        Cache::set('initAdmin_' . session('admin.id'), $data);
         return json($data);
     }
 
@@ -44,7 +43,7 @@ class AjaxController extends AdminController
      */
     public function clearCache(): Response
     {
-        Cache::flush();
+        Cache::clear();
         return $this->success('清理缓存成功');
     }
 
@@ -78,13 +77,13 @@ class AjaxController extends AdminController
         $upload_type = $uploadConfig['upload_type'];
         try {
             $upload = UploadService::instance()->setConfig($uploadConfig)->$upload_type($file, $type);
-        } catch (\Exception $e) {
+        }catch (\Exception $e) {
             return $this->error($e->getMessage());
         }
         $code = $upload['code'] ?? 0;
         if ($code == 0) {
             return $this->error($upload['data'] ?? '');
-        } else {
+        }else {
             return $type == 'editor' ? json(
                 [
                     'error'    => ['message' => '上传成功', 'number' => 201,],
@@ -131,7 +130,7 @@ class AjaxController extends AdminController
         $upload_allow_size = $uploadConfig['upload_allow_size'];
         $_upload_allow_ext = explode(',', $uploadConfig['upload_allow_ext']);
         $upload_allow_ext  = [];
-        array_map(function ($value) use (&$upload_allow_ext) {
+        array_map(function($value) use (&$upload_allow_ext) {
             $upload_allow_ext[] = '.' . $value;
         }, $_upload_allow_ext);
         $config      = [
@@ -162,10 +161,10 @@ class AjaxController extends AdminController
                     $code   = $upload['code'] ?? 0;
                     if ($code == 0) {
                         return json(['state' => $upload['data'] ?? '上传错误信息']);
-                    } else {
+                    }else {
                         return json(['state' => 'SUCCESS', 'url' => $upload['data']['url'] ?? '']);
                     }
-                } catch (\Exception $e) {
+                }catch (\Exception $e) {
                     return $this->error($e->getMessage());
                 }
             case 'listImage':

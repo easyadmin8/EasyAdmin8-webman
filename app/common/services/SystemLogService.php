@@ -2,7 +2,7 @@
 
 namespace app\common\services;
 
-use Shopwwi\LaravelCache\Cache;
+use support\Cache;
 use support\Db;
 
 /**
@@ -107,7 +107,7 @@ class SystemLogService
             $sql = $this->getCreateSql();
             Db::statement($sql);
         }
-        Cache::put($key, !empty($check));
+        Cache::set($key, !empty($check));
         return true;
     }
 
