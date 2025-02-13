@@ -20,9 +20,7 @@ use app\common\services\annotation\NodeAnnotation;
 trait Curd
 {
 
-    /**
-     * @NodeAnnotation(title="列表")
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Response
     {
         if (!$request->isAjax()) return $this->fetch();
@@ -41,15 +39,13 @@ trait Curd
         return json($data);
     }
 
-    /**
-     * @NodeAnnotation(title="添加")
-     */
+    #[NodeAnnotation(title: '添加', auth: true)]
     public function add(Request $request): Response
     {
         if ($request->isAjax()) {
             try {
                 $save = insertFields($this->model);
-            } catch (\Exception $e) {
+            }catch (\Exception $e) {
                 return $this->error('保存失败:' . $e->getMessage());
             }
             return $save ? $this->success('保存成功') : $this->error('保存失败');
@@ -57,9 +53,7 @@ trait Curd
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="编辑")
-     */
+    #[NodeAnnotation(title: '编辑', auth: true)]
     public function edit(Request $request)
     {
         $id  = (int)$request->input('id');
@@ -68,7 +62,7 @@ trait Curd
         if ($request->isAjax()) {
             try {
                 $save = updateFields($this->model, $row);
-            } catch (\PDOException|\Exception $e) {
+            }catch (\PDOException|\Exception $e) {
                 return $this->error('保存失败:' . $e->getMessage());
             }
             return $save ? $this->success('保存成功') : $this->error('保存失败');
@@ -77,9 +71,7 @@ trait Curd
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="删除")
-     */
+    #[NodeAnnotation(title: '删除', auth: true)]
     public function delete(Request $request): Response
     {
         if (!$request->isAjax()) return $this->error();
@@ -89,15 +81,13 @@ trait Curd
         if (empty($row)) return $this->error('数据不存在');
         try {
             $save = $this->model->whereIn('id', $id)->delete();
-        } catch (\PDOException|\Exception $e) {
+        }catch (\PDOException|\Exception $e) {
             return $this->error('删除失败:' . $e->getMessage());
         }
         return $save ? $this->success('删除成功') : $this->error('删除失败');
     }
 
-    /**
-     * @NodeAnnotation(title="导出")
-     */
+    #[NodeAnnotation(title: '导出', auth: true)]
     public function export(Request $request): Response|bool
     {
         if (env('EASYADMIN.IS_DEMO', false)) {
@@ -143,14 +133,12 @@ trait Curd
             $writer->save($file_path);
             // 下载文件
             return response()->download($file_path, $fileName . '.xlsx');
-        } catch (\Exception|\PhpOffice\PhpSpreadsheet\Exception$e) {
+        }catch (\Exception|\PhpOffice\PhpSpreadsheet\Exception$e) {
             return $this->error($e->getMessage());
         }
     }
 
-    /**
-     * @NodeAnnotation(title="属性修改")
-     */
+    #[NodeAnnotation(title: '属性修改', auth: true)]
     public function modify(Request $request): Response
     {
         if (!$request->isAjax()) return $this->error();
@@ -166,7 +154,7 @@ trait Curd
         try {
             foreach ($post as $key => $item) if ($key == 'field') $row->$item = $post['value'];
             $row->save();
-        } catch (\PDOException|\Exception $e) {
+        }catch (\PDOException|\Exception $e) {
             return $this->error("操作失败:" . $e->getMessage());
         }
         return $this->success('保存成功');

@@ -11,9 +11,7 @@ use Respect\Validation\Validator;
 use app\common\services\annotation\ControllerAnnotation;
 use app\common\services\annotation\NodeAnnotation;
 
-/**
- * @ControllerAnnotation(title="管理员管理")
- */
+#[ControllerAnnotation(title: '管理员管理')]
 class AdminController extends Controller
 {
     public function initialize()
@@ -24,9 +22,7 @@ class AdminController extends Controller
         $this->assign(compact('auth_list'));
     }
 
-    /**
-     * @NodeAnnotation(title="添加")
-     */
+    #[NodeAnnotation(title: '添加', auth: true)]
     public function add(Request $request): Response
     {
         if ($request->isAjax()) {
@@ -45,9 +41,7 @@ class AdminController extends Controller
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="编辑")
-     */
+    #[NodeAnnotation(title: '编辑', auth: true)]
     public function edit(Request $request): Response
     {
         $id  = $request->input('id');
@@ -71,9 +65,7 @@ class AdminController extends Controller
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="修改密码")
-     */
+    #[NodeAnnotation(title: '修改密码', auth: true)]
     public function password(Request $request): Response
     {
         $id  = $request->input('id');

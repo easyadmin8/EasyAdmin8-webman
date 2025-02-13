@@ -28,8 +28,16 @@ class InstallController
             $errorInfo = '.env 文件不存在，请先配置 .env 文件';
         }
         if (!$request->isAjax()) {
+            $envInfo     = [
+                'DB_HOST'   => $isInstall ? '' : env('DB_HOST', '127.0.0.1'),
+                'DB_NAME'   => $isInstall ? '' : env('DB_NAME', 'easyadmin8'),
+                'DB_USER'   => $isInstall ? '' : env('DB_USER', 'root'),
+                'DB_PASS'   => $isInstall ? '' : env('DB_PASS', 'root'),
+                'DB_PORT'   => $isInstall ? '' : env('DB_PORT', 3306),
+                'DB_PREFIX' => $isInstall ? '' : env('DB_PREFIX', 'ea8_'),
+            ];
             $currentHost = '://';
-            $result      = compact('errorInfo', 'currentHost', 'isInstall');
+            $result      = compact('errorInfo', 'currentHost', 'isInstall', 'envInfo');
             return view('install', $result);
         }
         if ($errorInfo) return $this->error($errorInfo);

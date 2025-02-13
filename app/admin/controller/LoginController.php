@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use app\admin\model\SystemAdmin;
 use app\common\controller\AdminController;
+use app\common\services\annotation\MiddlewareAnnotation;
 use support\Cache;
 use support\Request;
 use support\Response;
@@ -13,6 +14,7 @@ use Webman\Captcha\PhraseBuilder;
 
 class LoginController extends AdminController
 {
+    protected bool $ignoreLogin = true;
 
     public function index(Request $request): Response
     {

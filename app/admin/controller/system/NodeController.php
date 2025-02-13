@@ -11,9 +11,7 @@ use support\Response;
 use app\common\services\annotation\ControllerAnnotation;
 use app\common\services\annotation\NodeAnnotation;
 
-/**
- * @ControllerAnnotation(title="系统节点管理")
- */
+#[ControllerAnnotation(title: '系统节点管理')]
 class NodeController extends AdminController
 {
     public function initialize()
@@ -22,9 +20,7 @@ class NodeController extends AdminController
         $this->model = new SystemNode();
     }
 
-    /**
-     * @NodeAnnotation(title="列表")
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Response
     {
         if ($request->isAjax()) {
@@ -41,9 +37,7 @@ class NodeController extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="系统节点更新")
-     */
+    #[NodeAnnotation(title: '系统节点更新', auth: true)]
     public function refreshNode(Request $request): Response
     {
         $force = $request->input('force');
@@ -53,12 +47,12 @@ class NodeController extends AdminController
         $model = new SystemNode();
         try {
             if ($force == 1) {
-                $where[]        = [function ($query) use ($nodeList) {
+                $where[]        = [function($query) use ($nodeList) {
                     $query->whereIn('node', array_column($nodeList, 'node'));
                 }];
                 $updateNodeList = $model->where($where)->get()->toArray();
                 $formatNodeList = [];
-                array_map(function ($value) use (&$formatNodeList) {
+                array_map(function($value) use (&$formatNodeList) {
                     $formatNodeList[$value['node']]['title']   = $value['title'];
                     $formatNodeList[$value['node']]['is_auth'] = $value['is_auth'];
                 }, $nodeList);
@@ -85,15 +79,13 @@ class NodeController extends AdminController
             }
             $model->addAll($nodeList);
             TriggerService::updateNode();
-        } catch (\Exception $e) {
+        }catch (\Exception $e) {
             return $this->error('节点更新失败:' . $e->getMessage());
         }
         return $this->success('节点更新成功');
     }
 
-    /**
-     * @NodeAnnotation(title="清除失效节点")
-     */
+    #[NodeAnnotation(title: '清除失效节点', auth: true)]
     public function clearNode(Request $request): Response
     {
         if (!$request->isAjax()) return $this->error();
@@ -102,14 +94,14 @@ class NodeController extends AdminController
         try {
             $existNodeList  = $model->select(explode(',', 'id,node,title,type,is_auth'))->get()->toArray();
             $formatNodeList = [];
-            array_map(function ($value) use (&$formatNodeList) {
+            array_map(function($value) use (&$formatNodeList) {
                 $formatNodeList[$value['node']] = $value['title'];
             }, $nodeList);
             foreach ($existNodeList as $vo) {
                 !isset($formatNodeList[$vo['node']]) && $model->where('id', $vo['id'])->delete();
             }
             TriggerService::updateNode();
-        } catch (\Exception $e) {
+        }catch (\Exception $e) {
             return $this->error('节点更新失败:' . $e->getMessage());
         }
         return $this->success('节点更新成功');

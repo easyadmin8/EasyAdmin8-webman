@@ -11,23 +11,17 @@ use support\Db;
 use support\Request;
 use support\Response;
 
-/**
- * @ControllerAnnotation(title="CURD可视化管理")
- */
+#[ControllerAnnotation(title: 'CURD可视化管理')]
 class CurdGenerateController extends AdminController
 {
 
-    /**
-     * @NodeAnnotation(title="列表")
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Response
     {
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="列表")
-     */
+    #[NodeAnnotation(title: '保存', auth: true)]
     public function save(): Response
     {
         if (!request()->isAjax()) return $this->error();

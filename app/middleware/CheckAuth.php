@@ -32,23 +32,6 @@ class CheckAuth implements MiddlewareInterface
         $adminId         = session('admin.id', 0);
         $controllerClass = explode('\\', $request->controller);
         $controller      = strtolower(str_replace('Controller', '', array_pop($controllerClass)));
-        $action          = $request->action ?? 'index';
-        if ($controller == 'login') {
-            if ($request->method() == 'GET' && !empty($adminId) && $action != 'out') {
-                return redirect(__url());
-            }
-        }
-        if (!in_array($controller, $adminConfig['no_login_controller'])) {
-            $expireTime = session('admin.expire_time');
-            if (empty($adminId)) {
-                return $this->responseView('请先登录后台', [], __url("/login"));
-            }
-            // 判断是否登录过期
-            if ($expireTime !== true && time() > $expireTime) {
-                $request->session()->forget('admin');
-                return $this->responseView('登录已过期，请重新登录', [], __url("/login"));
-            }
-        }
         // 验证权限
         if ($adminId) {
             $authService = new AuthService($adminId);

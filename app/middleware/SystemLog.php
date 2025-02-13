@@ -3,6 +3,7 @@
 namespace app\middleware;
 
 use app\common\services\annotation\ControllerAnnotation;
+use app\common\services\annotation\MiddlewareAnnotation;
 use app\common\services\annotation\NodeAnnotation;
 use app\common\services\SystemLogService;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -45,19 +46,28 @@ class SystemLog implements MiddlewareInterface
             if (in_array($method, ['post', 'put', 'delete'])) {
                 $title = '';
                 try {
-                    $pathInfoExp = explode('/', $url);
-                    $_controller = $pathInfoExp[2] ?? '';
-                    $_action     = ucfirst($pathInfoExp[3] ?? '');
+                    $_controller = $request->controller;
+                    $_action     = $request->action;
                     if ($_controller && $_action) {
-                        $className       = "app\admin\controller\\{$_controller}\\{$_action}Controller";
-                        $reflectionClass = new \ReflectionClass($className);
-                        $parser          = new DocParser();
-                        $parser->setIgnoreNotImportedAnnotations(true);
-                        $reader               = new AnnotationReader($parser);
-                        $controllerAnnotation = $reader->getClassAnnotation($reflectionClass, ControllerAnnotation::class);
-                        $reflectionAction     = $reflectionClass->getMethod(end($pathInfoExp) ?? '');
-                        $nodeAnnotation       = $reader->getMethodAnnotation($reflectionAction, NodeAnnotation::class);
-                        $title                = $controllerAnnotation->title . ' - ' . $nodeAnnotation->title;
+                        $reflectionMethod = new \ReflectionMethod($_controller, $_action);
+                        $attributes       = $reflectionMethod->getAttributes(MiddlewareAnnotation::class);
+                        foreach ($attributes as $attribute) {
+                            $annotation = $attribute->newInstance();
+                            $_ignore    = (array)$annotation->ignore;
+                            if (in_array('log', array_map('strtolower', $_ignore))) return $response;
+                        }
+                        $controllerTitle      = $nodeTitle = '';
+                        $controllerAttributes = (new \ReflectionClass($_controller))->getAttributes(ControllerAnnotation::class);
+                        $actionAttributes     = $reflectionMethod->getAttributes(NodeAnnotation::class);
+                        foreach ($controllerAttributes as $controllerAttribute) {
+                            $controllerAnnotation = $controllerAttribute->newInstance();
+                            $controllerTitle      = $controllerAnnotation->title ?? '';
+                        }
+                        foreach ($actionAttributes as $actionAttribute) {
+                            $actionAnnotation = $actionAttribute->newInstance();
+                            $nodeTitle        = $actionAnnotation->title ?? '';
+                        }
+                        $title = $controllerTitle . ' - ' . $nodeTitle;
                     }
                 }catch (\Throwable $exception) {
                 }
