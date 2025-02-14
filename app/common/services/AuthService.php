@@ -2,6 +2,7 @@
 
 namespace app\common\services;
 
+use app\common\services\annotation\NodeAnnotation;
 use support\Db;
 use Illuminate\Support\Str;
 
@@ -99,7 +100,26 @@ class AuthService
         if (isset($this->adminNode[$node])) {
             return true;
         }
+        if ($this->checkNodeAnnotationAttrAuth($node)) return true;
         return false;
+    }
+
+    protected function checkNodeAnnotationAttrAuth(string $node): bool
+    {
+        $bool       = false;
+        $controller = request()->controller;
+        try {
+            $nodeExplode     = explode('/', $node);
+            $action          = end($nodeExplode);
+            $reflectionClass = new \ReflectionClass($controller);
+            $attributes      = $reflectionClass->getMethod($action)->getAttributes(NodeAnnotation::class);
+            foreach ($attributes as $attribute) {
+                $annotation = $attribute->newInstance();
+                $bool       = $annotation->auth === false;
+            }
+        }catch (\Throwable) {
+        }
+        return $bool;
     }
 
     /**
@@ -133,11 +153,11 @@ class AuthService
 
             $nodeIds  = Db::table($this->config['system_auth_node'])
                 ->whereIn('auth_id', explode(',', $adminInfo['auth_ids']))
-                ->select('node_id')->get()->map(function ($value) {
+                ->select('node_id')->get()->map(function($value) {
                     return (array)$value;
                 })->toArray();
             $nodeList = Db::table($this->config['system_node'])
-                ->whereIn('id', $nodeIds)->get()->keyBy('node')->map(function ($value) {
+                ->whereIn('id', $nodeIds)->get()->keyBy('node')->map(function($value) {
                     return (array)$value;
                 })->toArray();
         }

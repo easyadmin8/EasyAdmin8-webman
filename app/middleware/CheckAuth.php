@@ -2,6 +2,7 @@
 
 namespace app\middleware;
 
+use app\common\services\annotation\MiddlewareAnnotation;
 use app\common\traits\JumpTrait;
 use app\common\services\AuthService;
 use Webman\Http\Request;
@@ -32,6 +33,14 @@ class CheckAuth implements MiddlewareInterface
         $adminId         = session('admin.id', 0);
         $controllerClass = explode('\\', $request->controller);
         $controller      = strtolower(str_replace('Controller', '', array_pop($controllerClass)));
+        try {
+            $reflectionClass  = new \ReflectionClass($request->controller);
+            $action           = $request->action;
+            $checkIgnoreLogin = $reflectionClass->getMethod($action)->getAttributes(MiddlewareAnnotation::class)[0]->newInstance()->ignore;
+            // 不需要登录的页面 跳过检测权限
+            if (strtolower($checkIgnoreLogin) == 'login') return $handler($request);
+        }catch (\Throwable) {
+        }
         // 验证权限
         if ($adminId) {
             $authService = new AuthService($adminId);
