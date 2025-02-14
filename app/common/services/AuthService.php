@@ -2,6 +2,7 @@
 
 namespace app\common\services;
 
+use app\common\services\annotation\NodeAnnotation;
 use think\facade\Db;
 use think\helper\Str;
 
@@ -66,6 +67,7 @@ class AuthService
      * 检测检测权限
      * @param null $node
      * @return bool
+     * @throws \ReflectionException
      */
     public function checkNode($node = null): bool
     {
@@ -99,7 +101,26 @@ class AuthService
         if (isset($this->adminNode[$node])) {
             return true;
         }
+        if ($this->checkNodeAnnotationAttrAuth($node)) return true;
         return false;
+    }
+
+    protected function checkNodeAnnotationAttrAuth(string $node): bool
+    {
+        $bool       = false;
+        $controller = request()->controller;
+        try {
+            $nodeExplode     = explode('/', $node);
+            $action          = end($nodeExplode);
+            $reflectionClass = new \ReflectionClass($controller);
+            $attributes      = $reflectionClass->getMethod($action)->getAttributes(NodeAnnotation::class);
+            foreach ($attributes as $attribute) {
+                $annotation = $attribute->newInstance();
+                $bool       = $annotation->auth === false;
+            }
+        }catch (\Throwable) {
+        }
+        return $bool;
     }
 
     /**

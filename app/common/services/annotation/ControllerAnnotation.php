@@ -2,38 +2,18 @@
 
 namespace app\common\services\annotation;
 
-use Doctrine\Common\Annotations\Annotation\Attributes;
-use Doctrine\Common\Annotations\Annotation\Required;
-use Doctrine\Common\Annotations\Annotation\Target;
+use Attribute;
 
 /**
- * Class ControllerAnnotation
- *
- * @Annotation
- * @Target("CLASS")
- * @Attributes({
- *     @Attribute("title", type="string"),
- * })
- *
- * @since 2.0
+ * controller 节点注解类
  */
+#[Attribute]
 final class ControllerAnnotation
 {
-
     /**
-     * Route group prefix for the controller
-     *
-     * @Required()
-     *
-     * @var string
+     * @param string $title
+     * @param bool $auth 是否需要权限
+     * @param string|array $ignore
      */
-    public string $title = '';
-
-    /**
-     * 是否开启权限控制
-     * @Enum({true,false})
-     * @var bool
-     */
-    public bool $auth = true;
-
+    public function __construct(public string $title = '', public bool $auth = true, public string|array $ignore = '') {}
 }

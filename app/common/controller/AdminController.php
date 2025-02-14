@@ -2,8 +2,7 @@
 
 namespace app\common\controller;
 
-use app\common\traits\Curd;
-use app\common\traits\JumpTrait;
+use app\common\traits\{Curd, JumpTrait};
 use think\facade\Cache;
 use support\Response;
 use support\View;
@@ -32,6 +31,12 @@ class AdminController
     public array $order = [
         'id' => 'desc',
     ];
+
+    /**
+     * 过滤节点更新
+     * @var array
+     */
+    protected array $ignoreNode = [];
 
     /**
      * 不导出的字段信息

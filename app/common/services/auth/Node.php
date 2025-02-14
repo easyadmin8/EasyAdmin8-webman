@@ -52,11 +52,6 @@ class Node
     {
         list($nodeList, $controllerList) = [[], $this->getControllerList()];
         if (!empty($controllerList)) {
-            AnnotationRegistry::loadAnnotationClass('class_exists');
-            $parser = new DocParser();
-            $parser->setIgnoreNotImportedAnnotations(true);
-            $reader = new AnnotationReader($parser);
-
             foreach ($controllerList as $controllerFormat => $controller) {
                 // 获取类和方法的注释信息
                 $reflectionClass = new \ReflectionClass($controller);
@@ -64,15 +59,22 @@ class Node
                 $actionList      = [];
                 // 遍历读取所有方法的注释的参数信息
                 foreach ($methods as $method) {
-                    // 读取NodeAnnotation的注解
-                    $nodeAnnotation = $reader->getMethodAnnotation($method, NodeAnnotation::class);
-                    if (!empty($nodeAnnotation)) {
-                        $actionTitle  = !empty($nodeAnnotation->title) ? $nodeAnnotation->title : null;
-                        $actionAuth   = !empty($nodeAnnotation->auth) ? $nodeAnnotation->auth : false;
+
+                    // 忽略掉不需要的节点
+                    $property           = $reflectionClass->getProperty('ignoreNode');
+                    $propertyAttributes = $property->getAttributes(NodeAnnotation::class);
+                    if (!empty($propertyAttributes[0])) {
+                        $propertyAttribute = $propertyAttributes[0]->newInstance();
+                        if (in_array($method->name, $propertyAttribute->ignore)) continue;
+                    }
+                    $attributes = $reflectionClass->getMethod($method->name)->getAttributes(NodeAnnotation::class);
+                    foreach ($attributes as $attribute) {
+                        $annotation = $attribute->newInstance();
+                        if (!empty($annotation->ignore)) if (strtolower($annotation->ignore) == 'node') continue;
                         $actionList[] = [
                             'node'    => $controllerFormat . '/' . $method->name,
-                            'title'   => $actionTitle,
-                            'is_auth' => $actionAuth,
+                            'title'   => $annotation->title ?? null,
+                            'is_auth' => $annotation->auth ?? false,
                             'type'    => 2,
                         ];
                     }
@@ -80,16 +82,17 @@ class Node
                 // 方法非空才读取控制器注解
                 if (!empty($actionList)) {
                     // 读取Controller的注解
-                    $controllerAnnotation = $reader->getClassAnnotation($reflectionClass, ControllerAnnotation::class);
-                    $controllerTitle      = !empty($controllerAnnotation) && !empty($controllerAnnotation->title) ? $controllerAnnotation->title : null;
-                    $controllerAuth       = !empty($controllerAnnotation) && !empty($controllerAnnotation->auth) ? $controllerAnnotation->auth : false;
-                    $nodeList[]           = [
-                        'node'    => $controllerFormat,
-                        'title'   => $controllerTitle,
-                        'is_auth' => $controllerAuth,
-                        'type'    => 1,
-                    ];
-                    $nodeList             = array_merge($nodeList, $actionList);
+                    $attributes = $reflectionClass->getAttributes(ControllerAnnotation::class);
+                    foreach ($attributes as $attribute) {
+                        $controllerAnnotation = $attribute->newInstance();
+                        $nodeList[]           = [
+                            'node'    => $controllerFormat,
+                            'title'   => $controllerAnnotation->title ?? null,
+                            'is_auth' => $controllerAnnotation->auth ?? false,
+                            'type'    => 1,
+                        ];
+                    }
+                    $nodeList = array_merge($nodeList, $actionList);
                 }
             }
         }

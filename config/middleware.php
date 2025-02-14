@@ -18,6 +18,7 @@ return [
     ],
 
     'admin' => [
+        app\middleware\CheckLogin::class,
         app\middleware\SystemLog::class,
         app\middleware\CheckAuth::class,
     ],

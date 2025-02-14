@@ -11,9 +11,7 @@ use app\common\services\annotation\ControllerAnnotation;
 use app\common\services\annotation\NodeAnnotation;
 use think\Exception;
 
-/**
- * @ControllerAnnotation(title="管理员管理")
- */
+#[ControllerAnnotation(title: '管理员管理')]
 class AdminController extends Controller
 {
     public function initialize()
@@ -24,9 +22,7 @@ class AdminController extends Controller
         $this->assign(compact('auth_list'));
     }
 
-    /**
-     * @NodeAnnotation(title="添加")
-     */
+    #[NodeAnnotation(title: '添加', auth: true)]
     public function add(Request $request): Response
     {
         if ($request->isAjax()) {
@@ -37,7 +33,7 @@ class AdminController extends Controller
             $post['password'] = password($post['password']);
             try {
                 $save = $this->model->save($post);
-            } catch (\Exception $e) {
+            }catch (\Exception $e) {
                 return $this->error('保存失败:' . $e->getMessage());
             }
             return $save ? $this->success('保存成功') : $this->error('保存失败');
@@ -45,9 +41,7 @@ class AdminController extends Controller
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="编辑")
-     */
+    #[NodeAnnotation(title: '编辑', auth: true)]
     public function edit(Request $request): Response
     {
         $id  = $request->input('id');
@@ -61,7 +55,7 @@ class AdminController extends Controller
             try {
                 $save = $row->save($post);
                 TriggerService::updateMenu(session('admin.id'));
-            } catch (\Exception $e) {
+            }catch (\Exception $e) {
                 return $this->error('保存失败:' . $e->getMessage());
             }
             return $save ? $this->success('保存成功') : $this->error('保存失败');
@@ -71,9 +65,7 @@ class AdminController extends Controller
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="修改密码")
-     */
+    #[NodeAnnotation(title: '修改密码', auth: true)]
     public function password(Request $request): Response
     {
         $id  = $request->input('id');
@@ -87,7 +79,7 @@ class AdminController extends Controller
             ];
             try {
                 $this->validate($post, $rule);
-            } catch (Exception $exception) {
+            }catch (Exception $exception) {
                 return $this->error($exception->getMessage());
             }
             if ($post['password'] != $post['password_again']) {
@@ -98,7 +90,7 @@ class AdminController extends Controller
             }
             try {
                 $save = $this->model->where('id', $id)->update(['password' => password($post['password'])]);
-            } catch (\Exception $e) {
+            }catch (\Exception $e) {
                 return $this->error('保存失败:' . $e->getMessage());
             }
             return $save ? $this->success('保存成功') : $this->error('保存失败');

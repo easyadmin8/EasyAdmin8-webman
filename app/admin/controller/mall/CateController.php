@@ -7,9 +7,7 @@ use app\common\controller\AdminController;
 use app\common\services\annotation\ControllerAnnotation;
 use app\common\services\annotation\NodeAnnotation;
 
-/**
- * @ControllerAnnotation(title="商品分类管理")
- */
+#[ControllerAnnotation(title: '商品分类管理')]
 class CateController extends AdminController
 {
 

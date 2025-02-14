@@ -13,6 +13,7 @@ use Webman\Captcha\PhraseBuilder;
 
 class LoginController extends AdminController
 {
+    protected bool $ignoreLogin = true;
 
     public function index(Request $request): Response
     {

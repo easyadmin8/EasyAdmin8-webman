@@ -20,9 +20,7 @@ use app\common\services\annotation\NodeAnnotation;
 trait Curd
 {
 
-    /**
-     * @NodeAnnotation(title="列表")
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Response
     {
         if (!$request->isAjax()) return $this->fetch();
@@ -41,9 +39,7 @@ trait Curd
         return json($data);
     }
 
-    /**
-     * @NodeAnnotation(title="添加")
-     */
+    #[NodeAnnotation(title: '添加', auth: true)]
     public function add(Request $request): Response
     {
         if ($request->isAjax()) {
@@ -58,9 +54,7 @@ trait Curd
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="编辑")
-     */
+    #[NodeAnnotation(title: '编辑', auth: true)]
     public function edit(Request $request)
     {
         $id  = (int)$request->input('id');
@@ -79,9 +73,7 @@ trait Curd
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="删除")
-     */
+    #[NodeAnnotation(title: '删除', auth: true)]
     public function delete(Request $request): Response
     {
         if (!$request->isAjax()) return $this->error();
@@ -97,9 +89,7 @@ trait Curd
         return $save ? $this->success('删除成功') : $this->error('删除失败');
     }
 
-    /**
-     * @NodeAnnotation(title="导出")
-     */
+    #[NodeAnnotation(title: '导出', auth: true)]
     public function export(Request $request): Response|bool
     {
         if (env('EASYADMIN.IS_DEMO', false)) {
@@ -148,9 +138,7 @@ trait Curd
         }
     }
 
-    /**
-     * @NodeAnnotation(title="属性修改")
-     */
+    #[NodeAnnotation(title: '属性修改', auth: true)]
     public function modify(Request $request): Response
     {
         if (!$request->isAjax()) return $this->error();

@@ -5,8 +5,8 @@ namespace app\controller;
 use app\common\traits\JumpTrait;
 use support\Request;
 use support\Response;
-use support\Db;
 use think\facade\Cache;
+use think\facade\Db;
 
 class InstallController
 {
@@ -25,14 +25,20 @@ class InstallController
         }elseif (!extension_loaded("PDO")) {
             $errorInfo = '当前未开启PDO，无法进行安装';
         }
-        var_dump(base_path() . DIRECTORY_SEPARATOR . '.env');
-
         if (!is_file(base_path() . DIRECTORY_SEPARATOR . '.env')) {
             $errorInfo = '.env 文件不存在，请先配置 .env 文件';
         }
         if (!$request->isAjax()) {
+            $envInfo     = [
+                'DB_HOST'     => $isInstall ? '' : env('DB_HOST', '127.0.0.1'),
+                'DB_DATABASE' => $isInstall ? '' : env('DB_DATABASE', 'easyadmin8'),
+                'DB_USERNAME' => $isInstall ? '' : env('DB_USERNAME', 'root'),
+                'DB_PASSWORD' => $isInstall ? '' : env('DB_PASSWORD', 'root'),
+                'DB_PORT'     => $isInstall ? '' : env('DB_PORT', 3306),
+                'DB_PREFIX'   => $isInstall ? '' : env('DB_PREFIX', 'ea8_'),
+            ];
             $currentHost = '://';
-            $result      = compact('errorInfo', 'currentHost', 'isInstall');
+            $result      = compact('errorInfo', 'currentHost', 'isInstall', 'envInfo');
             return view('install', $result);
         }
         if ($errorInfo) return $this->error($errorInfo);
@@ -191,7 +197,7 @@ class InstallController
     protected function checkDatabase($database): bool
     {
         try {
-            $check = Db::select("SELECT * FROM information_schema.schemata WHERE schema_name='{$database}'");
+            $check = Db::query("SELECT * FROM information_schema.schemata WHERE schema_name='{$database}'");
         }catch (\Throwable $exception) {
             $check = false;
         }

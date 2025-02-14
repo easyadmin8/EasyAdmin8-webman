@@ -12,9 +12,7 @@ use app\common\services\annotation\ControllerAnnotation;
 use app\common\services\annotation\NodeAnnotation;
 use think\Exception;
 
-/**
- * @ControllerAnnotation(title="菜单管理")
- */
+#[ControllerAnnotation(title: '菜单管理')]
 class MenuController extends AdminController
 {
     public function initialize()
@@ -23,9 +21,7 @@ class MenuController extends AdminController
         $this->model = new SystemMenu();
     }
 
-    /**
-     * @NodeAnnotation(title="添加")
-     */
+    #[NodeAnnotation(title: '添加', auth: true)]
     public function add(Request $request): Response
     {
         $id     = $request->input('id');
@@ -42,18 +38,18 @@ class MenuController extends AdminController
             ];
             try {
                 $this->validate($post, $rule);
-            } catch (Exception $exception) {
+            }catch (Exception $exception) {
                 return $this->error($exception->getMessage());
             }
             try {
                 $save = $this->model->save($post);
-            } catch (\Exception $e) {
+            }catch (\Exception $e) {
                 return $this->error('保存失败');
             }
             if (!empty($save)) {
                 TriggerService::updateMenu();
                 return $this->success('保存成功');
-            } else {
+            }else {
                 return $this->error('保存失败');
             }
         }
@@ -62,9 +58,7 @@ class MenuController extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="编辑")
-     */
+    #[NodeAnnotation(title: '编辑', auth: true)]
     public function edit(Request $request): Response
     {
         $id  = $request->input('id');
@@ -79,19 +73,19 @@ class MenuController extends AdminController
             ];
             try {
                 $this->validate($post, $rule);
-            } catch (Exception $exception) {
+            }catch (Exception $exception) {
                 return $this->error($exception->getMessage());
             }
             if ($row->pid == HOME_PID) $post['pid'] = HOME_PID;
             try {
                 $save = $row->save($post);
-            } catch (\Exception $e) {
+            }catch (\Exception $e) {
                 return $this->error('保存失败');
             }
             if (!empty($save)) {
                 TriggerService::updateMenu();
                 return $this->success('保存成功');
-            } else {
+            }else {
                 return $this->error('保存失败');
             }
         }
@@ -100,9 +94,7 @@ class MenuController extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="属性修改")
-     */
+    #[NodeAnnotation(title: '属性修改', auth: true)]
     public function modify(Request $request): Response
     {
         $post = $request->post();
@@ -112,7 +104,7 @@ class MenuController extends AdminController
         ];
         try {
             $this->validate($post, $rule);
-        } catch (Exception $exception) {
+        }catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
         $row = $this->model->find($post['id']);
@@ -126,16 +118,14 @@ class MenuController extends AdminController
         try {
             foreach ($post as $key => $item) if ($key == 'field') $row->$item = $post['value'];
             $row->save();
-        } catch (\Exception $e) {
+        }catch (\Exception $e) {
             return $this->error($e->getMessage());
         }
         TriggerService::updateMenu();
         return $this->success('保存成功');
     }
 
-    /**
-     * @NodeAnnotation(title="删除")
-     */
+    #[NodeAnnotation(title: '删除', auth: true)]
     public function delete(Request $request): Response
     {
         if (!$request->isAjax()) return $this->error();
@@ -145,28 +135,26 @@ class MenuController extends AdminController
         if (empty($row)) return $this->error('数据不存在');
         try {
             $save = $this->model->whereIn('id', $id)->delete();
-        } catch (\PDOException|\Exception $e) {
+        }catch (\PDOException|\Exception $e) {
             return $this->error('删除失败:' . $e->getMessage());
         }
         if ($save) {
             TriggerService::updateMenu();
             return $this->success('删除成功');
-        } else {
+        }else {
             return $this->error('删除失败');
         }
     }
 
-    /**
-     * @NodeAnnotation(title="添加菜单提示")
-     */
+    #[NodeAnnotation(title: '添加菜单提示', auth: true)]
     public function getMenuTips(Request $request): Response
     {
         $node = $request->input('keywords');
         $list = SystemNode::where('node', 'Like', "%{$node}%")->limit(10)->field('node,title')->select()->toArray();
         return json([
-                        'code'    => 0,
-                        'content' => $list,
-                        'type'    => 'success',
-                    ]);
+            'code'    => 0,
+            'content' => $list,
+            'type'    => 'success',
+        ]);
     }
 }
