@@ -7,15 +7,17 @@ use app\common\traits\JumpTrait;
 use ReflectionClass;
 use ReflectionException;
 use Webman\Http\Request;
+use Webman\Http\Response;
+use Webman\MiddlewareInterface;
 
-class CheckLogin
+class CheckLogin implements MiddlewareInterface
 {
     use JumpTrait;
 
     /**
      * @throws ReflectionException
      */
-    public function process(Request $request, callable $handler)
+    public function process(Request $request, callable $handler): Response
     {
         $controller = $request->controller;
         $next       = $handler($request);
