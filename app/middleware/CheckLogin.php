@@ -7,20 +7,22 @@ use app\common\traits\JumpTrait;
 use ReflectionClass;
 use ReflectionException;
 use Webman\Http\Request;
+use Webman\Http\Response;
+use Webman\MiddlewareInterface;
 
-class CheckLogin
+class CheckLogin implements MiddlewareInterface
 {
     use JumpTrait;
 
     /**
      * @throws ReflectionException
      */
-    public function process(Request $request, callable $handler)
+    public function process(Request $request, callable $handler): Response
     {
         $controller = $request->controller;
         $next       = $handler($request);
         if (empty($controller)) return $next;
-        $action    = $request->action;
+        $action     = $request->action;
         $classObj   = new ReflectionClass($controller);
         $properties = $classObj->getDefaultProperties();
         // 整个控制器是否忽略登录
