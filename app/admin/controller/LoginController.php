@@ -7,7 +7,7 @@ use app\common\controller\AdminController;
 use support\Request;
 use support\Response;
 use think\Exception;
-use think\facade\Cache;
+use support\think\Cache;
 use Webman\Captcha\CaptchaBuilder;
 use Webman\Captcha\PhraseBuilder;
 

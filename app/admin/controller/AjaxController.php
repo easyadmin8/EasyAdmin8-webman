@@ -6,7 +6,7 @@ use app\admin\model\SystemUploadfile;
 use app\common\controller\AdminController;
 use app\common\services\MenuService;
 use app\common\services\UploadService;
-use think\facade\Cache;
+use support\think\Cache;
 use support\Request;
 use support\Response;
 use think\Exception;

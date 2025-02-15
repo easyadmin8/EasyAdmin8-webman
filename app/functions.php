@@ -1,6 +1,6 @@
 <?php
 
-use think\facade\Cache;
+use support\think\Cache;
 
 /**
  * Here is your custom functions.

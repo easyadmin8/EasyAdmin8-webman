@@ -3,7 +3,7 @@
 namespace app\common\controller;
 
 use app\common\traits\{Curd, JumpTrait};
-use think\facade\Cache;
+use support\think\Cache;
 use support\Response;
 use support\View;
 use think\Exception;

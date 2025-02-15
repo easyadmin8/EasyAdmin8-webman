@@ -2,7 +2,7 @@
 
 namespace app\common\services;
 
-use think\facade\Cache;
+use support\think\Cache;
 
 class TriggerService
 {

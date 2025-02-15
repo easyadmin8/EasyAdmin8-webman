@@ -1,7 +1,5 @@
 <?php
 
-// ThinkPHP 版本请查看 think-cache.php 文件
-
 return [
     'default' => 'file',
     'stores'  => [

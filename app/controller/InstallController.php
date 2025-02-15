@@ -5,7 +5,7 @@ namespace app\controller;
 use app\common\traits\JumpTrait;
 use support\Request;
 use support\Response;
-use think\facade\Cache;
+use support\think\Cache;
 use think\facade\Db;
 
 class InstallController
