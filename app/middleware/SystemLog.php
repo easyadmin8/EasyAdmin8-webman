@@ -31,8 +31,7 @@ class SystemLog implements MiddlewareInterface
 
     public function process(Request $request, callable $handler): Response
     {
-        $response = $handler($request);
-        if (!env('APP_ADMIN_SYSTEM_LOG', true)) return $response;
+        if (!env('APP_ADMIN_SYSTEM_LOG', true)) return $handler($request);
         if ($request->isAjax()) {
             $params = $request->all();
             if (isset($params['s'])) unset($params['s']);
@@ -52,7 +51,7 @@ class SystemLog implements MiddlewareInterface
                         foreach ($attributes as $attribute) {
                             $annotation = $attribute->newInstance();
                             $_ignore    = (array)$annotation->ignore;
-                            if (in_array('log', array_map('strtolower', $_ignore))) return $response;
+                            if (in_array('log', array_map('strtolower', $_ignore))) return $handler($request);
                         }
                         $controllerTitle      = $nodeTitle = '';
                         $controllerAttributes = (new \ReflectionClass($_controller))->getAttributes(ControllerAnnotation::class);
@@ -71,7 +70,7 @@ class SystemLog implements MiddlewareInterface
                 }
                 $ip = $request->getRealIp(true);
                 // 限制记录的响应内容，避免过大
-                $_response = $response->rawBody();
+                $_response = $handler($request)->rawBody();
                 $_response = mb_substr($_response, 0, 3000, 'utf-8');
                 $data      = [
                     'admin_id'    => session('admin.id'),
@@ -87,7 +86,7 @@ class SystemLog implements MiddlewareInterface
                 SystemLogService::instance()->setTableName()->save($data);
             }
         }
-        return $response;
+        return $handler($request);
     }
 
 }
