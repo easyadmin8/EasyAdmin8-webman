@@ -20,8 +20,7 @@ class CheckLogin implements MiddlewareInterface
     public function process(Request $request, callable $handler): Response
     {
         $controller = $request->controller;
-        $next       = $handler($request);
-        if (empty($controller)) return $next;
+        if (empty($controller)) return $handler($request);
         $action     = $request->action;
         $classObj   = new ReflectionClass($controller);
         $properties = $classObj->getDefaultProperties();
@@ -31,7 +30,7 @@ class CheckLogin implements MiddlewareInterface
         if (!$ignoreLogin) {
             $noNeedCheck = $properties['noNeedCheck'] ?? [];
             if (in_array($action, $noNeedCheck)) {
-                return $next;
+                return $handler($request);
             }
             $reflectionMethod = new \ReflectionMethod($controller, $action);
             $attributes       = $reflectionMethod->getAttributes(MiddlewareAnnotation::class);
@@ -39,7 +38,7 @@ class CheckLogin implements MiddlewareInterface
                 $annotation = $attribute->newInstance();
                 $_ignore    = (array)$annotation->ignore;
                 // 控制器中的某个方法忽略登录
-                if (in_array('LOGIN', $_ignore)) return $next;
+                if (in_array('LOGIN', $_ignore)) return $handler($request);
             }
             if (empty($adminUserInfo)) {
                 return $this->responseView('请先登录后台', [], __url("/login"));
@@ -52,6 +51,6 @@ class CheckLogin implements MiddlewareInterface
             }
         }
         $request->adminUserInfo = $adminUserInfo ?: [];
-        return $next;
+        return $handler($request);
     }
 }
