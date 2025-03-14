@@ -32,61 +32,61 @@ class SystemLog implements MiddlewareInterface
     public function process(Request $request, callable $handler): Response
     {
         if (!env('APP_ADMIN_SYSTEM_LOG', true)) return $handler($request);
-        if ($request->isAjax()) {
-            $params = $request->all();
-            if (isset($params['s'])) unset($params['s']);
-            foreach ($params as $key => $val) {
-                in_array($key, $this->sensitiveParams) && $params[$key] = "***********";
-            }
-            $method = strtolower($request->method());
-            $url    = $request->path();
-            if (in_array($method, ['post', 'put', 'delete'])) {
-                $title = '';
-                try {
-                    $_controller = $request->controller;
-                    $_action     = $request->action;
-                    if ($_controller && $_action) {
-                        $reflectionMethod = new \ReflectionMethod($_controller, $_action);
-                        $attributes       = $reflectionMethod->getAttributes(MiddlewareAnnotation::class);
-                        foreach ($attributes as $attribute) {
-                            $annotation = $attribute->newInstance();
-                            $_ignore    = (array)$annotation->ignore;
-                            if (in_array('log', array_map('strtolower', $_ignore))) return $handler($request);
-                        }
-                        $controllerTitle      = $nodeTitle = '';
-                        $controllerAttributes = (new \ReflectionClass($_controller))->getAttributes(ControllerAnnotation::class);
-                        $actionAttributes     = $reflectionMethod->getAttributes(NodeAnnotation::class);
-                        foreach ($controllerAttributes as $controllerAttribute) {
-                            $controllerAnnotation = $controllerAttribute->newInstance();
-                            $controllerTitle      = $controllerAnnotation->title ?? '';
-                        }
-                        foreach ($actionAttributes as $actionAttribute) {
-                            $actionAnnotation = $actionAttribute->newInstance();
-                            $nodeTitle        = $actionAnnotation->title ?? '';
-                        }
-                        $title = $controllerTitle . ' - ' . $nodeTitle;
-                    }
-                }catch (\Throwable $exception) {
-                }
-                $ip = $request->getRealIp(true);
-                // 限制记录的响应内容，避免过大
-                $_response = $handler($request)->rawBody();
-                $_response = mb_substr($_response, 0, 3000, 'utf-8');
-                $data      = [
-                    'admin_id'    => session('admin.id'),
-                    'title'       => $title,
-                    'url'         => $url,
-                    'method'      => $method,
-                    'ip'          => $ip,
-                    'content'     => json_encode($params, JSON_UNESCAPED_UNICODE),
-                    'response'    => $_response,
-                    'useragent'   => $request->header('user-agent'),
-                    'create_time' => time(),
-                ];
-                SystemLogService::instance()->setTableName()->save($data);
-            }
+        if (!$request->isAjax()) return $handler($request);
+        $params = $request->all();
+        if (isset($params['s'])) unset($params['s']);
+        foreach ($params as $key => $val) {
+            in_array($key, $this->sensitiveParams) && $params[$key] = "***********";
         }
-        return $handler($request);
+        $method   = strtolower($request->method());
+        $url      = $request->path();
+        $response = $handler($request);
+        if (in_array($method, ['post', 'put', 'delete'])) {
+            $title = '';
+            try {
+                $_controller = $request->controller;
+                $_action     = $request->action;
+                if ($_controller && $_action) {
+                    $reflectionMethod = new \ReflectionMethod($_controller, $_action);
+                    $attributes       = $reflectionMethod->getAttributes(MiddlewareAnnotation::class);
+                    foreach ($attributes as $attribute) {
+                        $annotation = $attribute->newInstance();
+                        $_ignore    = (array)$annotation->ignore;
+                        if (in_array('log', array_map('strtolower', $_ignore))) return $handler($request);
+                    }
+                    $controllerTitle      = $nodeTitle = '';
+                    $controllerAttributes = (new \ReflectionClass($_controller))->getAttributes(ControllerAnnotation::class);
+                    $actionAttributes     = $reflectionMethod->getAttributes(NodeAnnotation::class);
+                    foreach ($controllerAttributes as $controllerAttribute) {
+                        $controllerAnnotation = $controllerAttribute->newInstance();
+                        $controllerTitle      = $controllerAnnotation->title ?? '';
+                    }
+                    foreach ($actionAttributes as $actionAttribute) {
+                        $actionAnnotation = $actionAttribute->newInstance();
+                        $nodeTitle        = $actionAnnotation->title ?? '';
+                    }
+                    $title = $controllerTitle . ' - ' . $nodeTitle;
+                }
+            }catch (\Throwable $exception) {
+            }
+            $ip = $request->getRealIp(true);
+            // 限制记录的响应内容，避免过大
+            $_response = $response->rawBody();
+            $_response = mb_substr($_response, 0, 3000, 'utf-8');
+            $data      = [
+                'admin_id'    => session('admin.id'),
+                'title'       => $title,
+                'url'         => $url,
+                'method'      => $method,
+                'ip'          => $ip,
+                'content'     => json_encode($params, JSON_UNESCAPED_UNICODE),
+                'response'    => $_response,
+                'useragent'   => $request->header('user-agent'),
+                'create_time' => time(),
+            ];
+            SystemLogService::instance()->setTableName()->save($data);
+        }
+        return $response;
     }
 
 }
