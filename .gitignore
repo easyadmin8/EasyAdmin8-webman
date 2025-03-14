@@ -8,3 +8,4 @@
 /public/storage
 /config/install/lock/install.lock
 composer.lock
+/public/.idea
