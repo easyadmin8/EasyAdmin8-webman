@@ -103,11 +103,48 @@ class LogController extends AdminController
         }
     }
 
-    #[MiddlewareAnnotation(ignore: MiddlewareAnnotation::IGNORE_LOG)]
-    #[NodeAnnotation(title: '框架日志', auth: true, ignore: NodeAnnotation::IGNORE_NODE)]
-
+    #[
+        MiddlewareAnnotation(ignore: MiddlewareAnnotation::IGNORE_LOG),
+        NodeAnnotation(title: '框架日志', auth: true, ignore: NodeAnnotation::IGNORE_NODE),
+    ]
     public function record(): Response|string
     {
         return (new \Wolfcode\PhpLogviewer\webman\laravel\LogViewer())->fetch();
     }
+
+    #[NodeAnnotation(title: '删除指定日志', auth: true)]
+    public function deleteMonthLog(): Response|string
+    {
+        if (!request()->isAjax()) {
+            return $this->fetch();
+        }
+
+        if ($this->isDemo) return $this->error('演示环境下不允许操作');
+
+        $monthsAgo = (int)request()->post('month', 0);
+        if ($monthsAgo < 1) return $this->error('月份错误');
+        $dbPrefix   = env('DB_PREFIX');
+        $dbLike     = "{$dbPrefix}system_log_";
+        $tables     = Db::select("SHOW TABLES LIKE '$dbLike%'");
+        $threshold  = date('Ym', strtotime("-$monthsAgo month"));
+        $tableNames = [];
+        try {
+            foreach ($tables as $table) {
+                $table     = get_mangled_object_vars($table);
+                $tableName = current($table);
+                if (!preg_match("/^$dbLike\d{6}$/", $tableName)) continue;
+                $datePart   = substr($tableName, -6);
+                $issetTable = Db::select("SHOW TABLES LIKE '$tableName'");
+                if (!$issetTable) continue;
+                if ($datePart - $threshold <= 0) {
+                    Db::statement("DROP TABLE `$tableName`");
+                    $tableNames[] = $tableName;
+                }
+            }
+        }catch (\Throwable) {
+        }
+        if (empty($tableNames)) return $this->error('没有需要删除的表');
+        return $this->success('操作成功 - 共删除 ' . count($tableNames) . ' 张表<br/>' . implode('<br>', $tableNames));
+    }
+
 }
