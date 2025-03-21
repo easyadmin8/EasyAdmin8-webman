@@ -2,6 +2,7 @@
 
 namespace app\admin\controller\mall;
 
+use app\admin\model\MallCate;
 use app\admin\model\MallGoods;
 use app\common\controller\AdminController;
 use app\common\services\annotation\ControllerAnnotation;
@@ -20,6 +21,8 @@ class GoodsController extends AdminController
     {
         parent::initialize();
         $this->model = new MallGoods();
+        $cate        = (new MallCate())->column('title', 'id');
+        $this->assign(compact('cate'));
     }
 
     #[NodeAnnotation(title: '列表', auth: true)]
