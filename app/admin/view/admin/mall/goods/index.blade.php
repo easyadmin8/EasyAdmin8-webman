@@ -10,4 +10,7 @@
         </table>
     </div>
 </div>
+<script>
+    let cate = JSON.parse('{!!json_encode($cate,JSON_UNESCAPED_UNICODE)!!}');
+</script>
 @include('admin.layout.foot')
