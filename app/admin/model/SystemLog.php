@@ -9,21 +9,18 @@ use think\model\relation\HasOne;
 class SystemLog extends BaseModel
 {
 
-    public function __construct(array $data = [])
-    {
-        parent::__construct($data);
-        $this->name = 'system_log_' . date('Ym');
-    }
+    protected array $type = [
+        'content'  => 'string',
+        'response' => 'string',
+    ];
 
+    protected function init(): void
+    {
+        SystemLogService::instance()->detectTable();
+    }
     public function admin(): HasOne
     {
         return $this->hasOne(SystemAdmin::class, 'id', 'admin_id')->field('id,username');
     }
 
-    public function setMonth($month): static
-    {
-        SystemLogService::instance()->detectTable();
-        $this->name = 'system_log_' . $month;
-        return $this;
-    }
 }

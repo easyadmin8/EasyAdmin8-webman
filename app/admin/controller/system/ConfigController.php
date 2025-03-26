@@ -41,12 +41,12 @@ class ConfigController extends AdminController
             if ($group == 'upload') {
                 $upload_types = config('admin.upload_types');
                 // 兼容旧版本
-                $this->model->where('name', 'upload_allow_type')->update(['value' => implode(',', array_keys($upload_types))]);
+                $this->model->removeOption('where')->where('name', 'upload_allow_type')->update(['value' => implode(',', array_keys($upload_types))]);
             }
             foreach ($post as $key => $val) {
                 if (in_array($key, $notAddFields)) continue;
-                if ($this->model->where('name', $key)->count()) {
-                    $this->model->where('name', $key)->update(['value' => $val,]);
+                if ($this->model->removeOption('where')->where('name', $key)->count()) {
+                    $this->model->removeOption('where')->where('name', $key)->update(['value' => $val,]);
                 }else {
                     if (empty($key)) continue;
                     $this->model->insert(

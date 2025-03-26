@@ -48,7 +48,7 @@ class NodeController extends AdminController
         try {
             if ($force == 1) {
                 $where[]        = ['node', 'IN', array_column($nodeList, 'node')];
-                $updateNodeList = $model->where($where)->select()->toArray();
+                $updateNodeList = $model->removeOption('where')->where($where)->select()->toArray();
                 $formatNodeList = [];
                 array_map(function($value) use (&$formatNodeList) {
                     $formatNodeList[$value['node']]['title']   = $value['title'];
@@ -56,7 +56,7 @@ class NodeController extends AdminController
                 }, $nodeList);
                 foreach ($updateNodeList as $vo) {
                     if (isset($formatNodeList[$vo['node']])) {
-                        $model->where('id', $vo['id'])->update(
+                        $model->removeOption('where')->where('id', $vo['id'])->update(
                             [
                                 'title'   => $formatNodeList[$vo['node']]['title'],
                                 'is_auth' => $formatNodeList[$vo['node']]['is_auth'],
@@ -65,7 +65,7 @@ class NodeController extends AdminController
                     }
                 }
             }
-            $existNodeList = $model->field('node,title,type,is_auth')->select()->toArray();
+            $existNodeList = $model->removeOption('where')->field('node,title,type,is_auth')->select()->toArray();
             foreach ($nodeList as $key => &$vo) {
                 $vo['create_time'] = $vo['update_time'] = time();
                 foreach ($existNodeList as $v) {
@@ -75,8 +75,10 @@ class NodeController extends AdminController
                     }
                 }
             }
-            $model->saveAll($nodeList);
-            TriggerService::updateNode();
+            if (!empty($nodeList)) {
+                $model->saveAll($nodeList);
+                TriggerService::updateNode();
+            }
         }catch (\Exception $e) {
             return $this->error('节点更新失败:' . $e->getMessage());
         }

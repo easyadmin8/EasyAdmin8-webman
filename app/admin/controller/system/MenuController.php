@@ -11,6 +11,7 @@ use support\Response;
 use app\common\services\annotation\ControllerAnnotation;
 use app\common\services\annotation\NodeAnnotation;
 use think\Exception;
+use think\facade\Db;
 
 #[ControllerAnnotation(title: '菜单管理')]
 class MenuController extends AdminController
@@ -131,10 +132,10 @@ class MenuController extends AdminController
         if (!$request->isAjax()) return $this->error();
         $id = $request->input('id');
         if (!is_array($id)) $id = (array)$id;
-        $row = $this->model->whereIn('id', $id)->field('id')->select()->toArray();
-        if (empty($row)) return $this->error('数据不存在');
+        $row = $this->model->whereIn('id', $id)->field('id')->select();
+        if ($row->isEmpty()) return $this->error('数据不存在');
         try {
-            $save = $this->model->whereIn('id', $id)->delete();
+            $save = $row->delete();
         }catch (\PDOException|\Exception $e) {
             return $this->error('删除失败:' . $e->getMessage());
         }

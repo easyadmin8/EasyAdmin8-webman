@@ -6,6 +6,13 @@ use app\model\BaseModel;
 
 class SystemAdmin extends BaseModel
 {
+    protected function getOptions(): array
+    {
+        return [
+            'deleteTime' => 'delete_time',
+        ];
+    }
+
     public array $notes = [
         'login_type' => [
             1 => '密码登录',
@@ -13,9 +20,14 @@ class SystemAdmin extends BaseModel
         ],
     ];
 
+    public function getAuthIdsAttr($value): array
+    {
+        if (!$value) return [];
+        return explode(',', $value);
+    }
+
     public function getAuthList(): array
     {
-        $list = SystemAuth::where('status', 1)->column('title', 'id');
-        return $list;
+        return (new SystemAuth())->removeOption('where')->where('status', 1)->column('title', 'id');
     }
 }

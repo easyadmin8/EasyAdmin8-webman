@@ -60,7 +60,6 @@ define(["jquery", "tableSelect"], function ($, tableSelect) {
         },
         request: {
             post: function (option, ok, no, ex) {
-                if (!option['data']['_token']) option['data']['_token'] = init.csrf_token
                 return admin.request.ajax('post', option, ok, no, ex);
             },
             get: function (option, ok, no, ex) {

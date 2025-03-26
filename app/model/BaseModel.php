@@ -3,24 +3,22 @@
 namespace app\model;
 
 use think\Model;
+use think\model\concern\SoftDelete;
 
 class BaseModel extends Model
 {
     /**
-     * 自动时间戳类型
-     * @var string
+     * 软删除
      */
-    protected $autoWriteTimestamp = true;
+    use SoftDelete;
 
-    /**
-     * 添加时间
-     * @var string
-     */
-    protected $createTime = 'create_time';
-
-    /**
-     * 更新时间
-     * @var string
-     */
-    protected $updateTime = 'update_time';
+    protected function getOptions(): array
+    {
+        return [
+            'autoWriteTimestamp' => true,
+            'createTime'         => 'create_time',
+            'updateTime'         => 'update_time',
+            'deleteTime'         => false,
+        ];
+    }
 }

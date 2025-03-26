@@ -51,7 +51,7 @@ class AdminController extends Controller
             $post             = $request->post();
             $authIds          = $request->post('auth_ids', []);
             $post['auth_ids'] = implode(',', array_keys($authIds));
-            if (isset($row['password'])) unset($row['password']);
+            $post['password'] = $row->password;
             try {
                 $save = $row->save($post);
                 TriggerService::updateMenu(session('admin.id'));
@@ -60,7 +60,6 @@ class AdminController extends Controller
             }
             return $save ? $this->success('保存成功') : $this->error('保存失败');
         }
-        $row->auth_ids = explode(',', $row->auth_ids ?: '');
         $this->assign(compact('row'));
         return $this->fetch();
     }

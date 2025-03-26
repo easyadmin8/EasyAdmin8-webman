@@ -69,7 +69,7 @@ class AjaxController extends AdminController
         ];
         try {
             $this->validate($data, $rule);
-        } catch (Exception $exception) {
+        }catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
         $file = $data['file'];
@@ -82,13 +82,13 @@ class AjaxController extends AdminController
         $upload_type = $uploadConfig['upload_type'];
         try {
             $upload = UploadService::instance()->setConfig($uploadConfig)->$upload_type($file, $type);
-        } catch (\Exception $e) {
+        }catch (\Exception $e) {
             return $this->error($e->getMessage());
         }
         $code = $upload['code'] ?? 0;
         if ($code == 0) {
             return $this->error($upload['data'] ?? '');
-        } else {
+        }else {
             return $type == 'editor' ? json(
                 [
                     'error'    => ['message' => '上传成功', 'number' => 201,],
@@ -134,7 +134,7 @@ class AjaxController extends AdminController
         $upload_allow_size = $uploadConfig['upload_allow_size'];
         $_upload_allow_ext = explode(',', $uploadConfig['upload_allow_ext']);
         $upload_allow_ext  = [];
-        array_map(function ($value) use (&$upload_allow_ext) {
+        array_map(function($value) use (&$upload_allow_ext) {
             $upload_allow_ext[] = '.' . $value;
         }, $_upload_allow_ext);
         $config      = [
@@ -165,10 +165,10 @@ class AjaxController extends AdminController
                     $code   = $upload['code'] ?? 0;
                     if ($code == 0) {
                         return json(['state' => $upload['data'] ?? '上传错误信息']);
-                    } else {
+                    }else {
                         return json(['state' => 'SUCCESS', 'url' => $upload['data']['url'] ?? '']);
                     }
-                } catch (\Exception $e) {
+                }catch (\Exception $e) {
                     return $this->error($e->getMessage());
                 }
             case 'listImage':
@@ -184,4 +184,23 @@ class AjaxController extends AdminController
                 return json($config);
         }
     }
+
+    public function composerInfo(): Response
+    {
+        $lockFilePath = base_path() . '/composer.lock';
+        $list         = [];
+        if (file_exists($lockFilePath)) {
+            $lockFileContent = file_get_contents($lockFilePath);
+            if ($lockFileContent !== false) {
+                $lockData = json_decode($lockFileContent, true);
+                if (!empty($lockData['packages'])) {
+                    foreach ($lockData['packages'] as $package) {
+                        $list[] = ['name' => $package['name'], 'version' => $package['version']];
+                    }
+                }
+            }
+        }
+        return $this->success('', $list);
+    }
+
 }

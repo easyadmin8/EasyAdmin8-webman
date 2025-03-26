@@ -8,7 +8,7 @@ class SystemNode extends BaseModel
 {
     public function getNodeTreeList(): array
     {
-        $list = $this->select()->toArray();
+        $list = $this->removeOption('where')->select()->toArray();
         return $this->buildNodeTree($list);
     }
 

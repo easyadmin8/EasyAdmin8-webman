@@ -6,13 +6,20 @@ use app\model\BaseModel;
 
 class SystemMenu extends BaseModel
 {
+    protected function getOptions(): array
+    {
+        return [
+            'deleteTime' => 'delete_time',
+        ];
+    }
+
     public function getPidMenuList(): array
     {
-        $list        = $this->field('id,pid,title')
-            ->where([
-                        ['pid', '<>', HOME_PID],
-                        ['status', '=', 1],
-                    ])->select()->toArray();
+        $list = $this->removeOption('where')->field('id,pid,title')->where([
+            ['pid', '<>', HOME_PID],
+            ['status', '=', 1],
+        ])->select()->toArray();
+
         $pidMenuList = $this->buildPidMenu(0, $list);
         return array_merge([['id' => 0, 'pid' => 0, 'title' => '顶级菜单']], $pidMenuList);
     }

@@ -46,7 +46,7 @@ trait Curd
             $post = $request->post();
             try {
                 $save = $this->model->save($post);
-            } catch (\Exception $e) {
+            }catch (\Exception $e) {
                 return $this->error('保存失败:' . $e->getMessage());
             }
             return $save ? $this->success('保存成功') : $this->error('保存失败');
@@ -64,7 +64,7 @@ trait Curd
             $post = $request->post();
             try {
                 $save = $row->save($post);
-            } catch (\PDOException|\Exception $e) {
+            }catch (\PDOException|\Exception $e) {
                 return $this->error('保存失败:' . $e->getMessage());
             }
             return $save ? $this->success('保存成功') : $this->error('保存失败');
@@ -79,11 +79,11 @@ trait Curd
         if (!$request->isAjax()) return $this->error();
         $id = $request->input('id');
         if (!is_array($id)) $id = (array)$id;
-        $row = $this->model->whereIn('id', $id)->field('id')->select()->toArray();
-        if (empty($row)) return $this->error('数据不存在');
+        $row = $this->model->whereIn('id', $id)->field('id')->select();
+        if ($row->isEmpty()) return $this->error('数据不存在');
         try {
-            $save = $this->model->whereIn('id', $id)->delete();
-        } catch (\PDOException|\Exception $e) {
+            $save = $row->delete();
+        }catch (\PDOException|\Exception $e) {
             return $this->error('删除失败:' . $e->getMessage());
         }
         return $save ? $this->success('删除成功') : $this->error('删除失败');
@@ -133,7 +133,7 @@ trait Curd
             $writer->save($file_path);
             // 下载文件
             return response()->download($file_path, $fileName . '.xlsx');
-        } catch (\Exception|\PhpOffice\PhpSpreadsheet\Exception$e) {
+        }catch (\Exception|\PhpOffice\PhpSpreadsheet\Exception$e) {
             return $this->error($e->getMessage());
         }
     }
@@ -149,7 +149,7 @@ trait Curd
         ];
         try {
             $this->validate($post, $rule);
-        } catch (Exception $exception) {
+        }catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
         $row = $this->model->find($post['id']);
@@ -159,7 +159,7 @@ trait Curd
         try {
             foreach ($post as $key => $item) if ($key == 'field') $row->$item = $post['value'];
             $row->save();
-        } catch (\PDOException|\Exception $e) {
+        }catch (\PDOException|\Exception $e) {
             return $this->error("操作失败:" . $e->getMessage());
         }
         return $this->success('保存成功');

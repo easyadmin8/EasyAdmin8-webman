@@ -6,4 +6,10 @@ use app\model\BaseModel;
 
 class SystemQuick extends BaseModel
 {
+    protected function getOptions(): array
+    {
+        return [
+            'deleteTime' => 'delete_time',
+        ];
+    }
 }

@@ -31,8 +31,8 @@ class LogController extends AdminController
         $month = !empty($excludeFields['month']) ? date('Ym', strtotime($excludeFields['month'])) : date('Ym');
         if (empty($month)) $month = date('Ym');
         try {
-            $count = $this->model->setMonth($month)->where($where)->count();
-            $list  = $this->model->setMonth($month)->where($where)->order($this->order)->with(['admin'])->limit($limit)->select()->toArray();
+            $count = $this->model->setSuffix("_$month")->where($where)->count();
+            $list  = $this->model->setSuffix("_$month")->where($where)->order($this->order)->with(['admin'])->limit($limit)->select()->toArray();
         }catch (\PDOException|\Exception $exception) {
             $count = 0;
             $list  = [];
@@ -54,7 +54,8 @@ class LogController extends AdminController
         }
         # 功能简单，请根据业务自行扩展
         [$page, $limit, $where, $excludeFields] = $this->buildTableParams(['month']);
-        $tableName = $this->model->getTable();
+        $month     = !empty($excludeFields['month']) ? date('Ym', strtotime($excludeFields['month'])) : date('Ym');
+        $tableName = $this->model->setSuffix("_$month")->getTable();
         $tableName = CommonTool::humpToLine(lcfirst($tableName));
         $dbList    = Db::query("show full columns from {$tableName}");
         $header    = [];
@@ -64,10 +65,9 @@ class LogController extends AdminController
                 $header[] = [$comment, $vo['Field']];
             }
         }
-        $month = !empty($excludeFields['month']) ? date('Ym', strtotime($excludeFields['month'])) : date('Ym');
         if (empty($month)) $month = date('Ym');
         try {
-            $list = $this->model->setMonth($month)->where($where)->order($this->order)->limit(100000)->select()->toArray();
+            $list = $this->model->setSuffix("_$month")->where($where)->order($this->order)->limit(100000)->select()->toArray();
         }catch (\PDOException|\Exception $exception) {
             return $this->error($exception->getMessage());
         }

@@ -6,13 +6,20 @@ use app\model\BaseModel;
 
 class SystemAuth extends BaseModel
 {
+    protected function getOptions(): array
+    {
+        return [
+            'deleteTime' => 'delete_time',
+        ];
+    }
+
     /**
      * @param $authId
      * @return array
      */
     public function getAuthorizeNodeListByAdminId($authId): array
     {
-        $checkNodeList = SystemAuthNode::where('auth_id', $authId)->column('node_id');
+        $checkNodeList = (new SystemAuthNode())->where('auth_id', $authId)->column('node_id');
         $systemNode    = new SystemNode();
         $nodeList      = $systemNode->where('is_auth', 1)->field('id,node,title,type,is_auth')->select()->toArray();
         $newNodeList   = [];
