@@ -37,7 +37,7 @@ if (!function_exists('parse_name')) {
     function parse_name(string $name, int $type = 0, bool $ucfirst = true): string
     {
         if ($type) {
-            $name = preg_replace_callback('/_([a-zA-Z])/', function ($match) {
+            $name = preg_replace_callback('/_([a-zA-Z])/', function($match) {
                 return strtoupper($match[1]);
             }, $name);
 
@@ -101,15 +101,6 @@ if (!function_exists('password')) {
     {
         $value = sha1('blog_') . md5($value) . md5('_encrypt') . sha1($value);
         return sha1($value);
-    }
-
-}
-
-if (!function_exists('json')) {
-
-    function json(array $data = []): \support\Response
-    {
-        return response()->json($data);
     }
 
 }
