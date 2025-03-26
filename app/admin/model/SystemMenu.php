@@ -15,7 +15,7 @@ class SystemMenu extends BaseModel
 
     public function getPidMenuList(): array
     {
-        $list = $this->removeOption('where')->field('id,pid,title')->where([
+        $list = $this->removeOption()->field('id,pid,title')->where([
             ['pid', '<>', HOME_PID],
             ['status', '=', 1],
         ])->select()->toArray();
