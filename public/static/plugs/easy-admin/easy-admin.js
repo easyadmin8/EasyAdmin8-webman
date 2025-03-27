@@ -973,8 +973,9 @@ define(["jquery", "tableSelect"], function ($, tableSelect) {
                 maxmin: true,
                 anim: 0,
                 moveOut: true,
-                move: false,
+                shade: 0.3,
                 shadeClose: shadeClose,
+                scrollbar: false,
                 before: function () {
                 },
                 success: function (layero, index) {
