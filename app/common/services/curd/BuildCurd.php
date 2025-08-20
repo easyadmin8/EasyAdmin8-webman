@@ -5,7 +5,7 @@ namespace app\common\services\curd;
 use app\common\services\curd\exceptions\FileException;
 use app\common\services\curd\exceptions\TableException;
 use app\common\services\tool\CommonTool;
-use support\Db;
+use support\think\Db;
 
 /**
  * 快速构建系统CURD
@@ -275,21 +275,21 @@ class BuildCurd
         try {
 
             // 获取表列注释
-            $columns = Db::select("SHOW FULL COLUMNS FROM {$this->tablePrefix}{$this->table}");
+            $columns = Db::query("SHOW FULL COLUMNS FROM {$this->tablePrefix}{$this->table}");
             foreach ($columns as $vo) {
                 $column = [
-                    'type'     => $vo->Type,
-                    'comment'  => !empty($vo->Comment) ? $vo->Comment : $vo->Field,
-                    'required' => $vo->Null == "NO",
-                    'default'  => $vo->Default,
+                    'type'     => $vo['Type'],
+                    'comment'  => !empty($vo['Comment']) ? $vo['Comment'] : $vo['Field'],
+                    'required' => $vo['Null'] == "NO",
+                    'default'  => $vo['Default'],
                 ];
 
                 // 格式化列数据
                 $this->buildColumn($column);
 
-                $this->tableColumns[$vo->Field] = $column;
+                $this->tableColumns[$vo['Field']] = $column;
 
-                if ($vo->Field == 'delete_time') {
+                if ($vo['Field'] == 'delete_time') {
                     $this->delete = true;
                 }
 
