@@ -28,7 +28,6 @@
     "phpoffice/phpspreadsheet": "^1.29",
     "aliyuncs/oss-sdk-php": "^2.6",
     "qcloud/cos-sdk-v5": "^2.6",
-    "qiniu/php-sdk": "^7.11",
     "illuminate/support": "^11.0 || ^9.52",
     "topthink/think-template": "^3.0",
     "topthink/think-validate": "^2.0 || ^3.0",
@@ -41,6 +40,7 @@
     "webman/captcha": "^1.0",
     "wolf-leo/phplogviewer": "^0.11.3",
     "wolfcode/authenticator": "^0.0.6",
+    "wolfcode/qiniu-php-sdk": "^8.0",
     "ext-pdo": "*"
   },
   "suggest": {
