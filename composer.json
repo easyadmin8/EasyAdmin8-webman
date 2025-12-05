@@ -39,9 +39,9 @@
     "webman/domain": "^2.1",
     "aliyuncs/oss-sdk-php": "^2.6",
     "qcloud/cos-sdk-v5": "^2.6",
-    "qiniu/php-sdk": "^7.11",
     "wolf-leo/phplogviewer": "^0.11.3",
     "wolfcode/authenticator": "^0.0.6",
+    "wolfcode/qiniu-php-sdk": "^8.0",
     "ext-pdo": "*"
   },
   "suggest": {
