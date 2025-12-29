@@ -30,9 +30,9 @@ class InstallController
         if (!$request->isAjax()) {
             $envInfo     = [
                 'DB_HOST'   => $isInstall ? '' : env('DB_HOST', '127.0.0.1'),
-                'DB_NAME'   => $isInstall ? '' : env('DB_NAME', 'easyadmin8'),
-                'DB_USER'   => $isInstall ? '' : env('DB_USER', 'root'),
-                'DB_PASS'   => $isInstall ? '' : env('DB_PASS', 'root'),
+                'DB_NAME'   => $isInstall ? '' : env('DB_DATABASE', 'easyadmin8'),
+                'DB_USER'   => $isInstall ? '' : env('DB_USERNAME', 'root'),
+                'DB_PASS'   => $isInstall ? '' : env('DB_PASSWORD', 'root'),
                 'DB_PORT'   => $isInstall ? '' : env('DB_PORT', 3306),
                 'DB_PREFIX' => $isInstall ? '' : env('DB_PREFIX', 'ea8_'),
             ];
